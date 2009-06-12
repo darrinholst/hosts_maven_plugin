@@ -1,6 +1,6 @@
 h1. Description: 
 
-The need to test out our mvn releases without actually tagging and pushing artifacts to the repository. Due to a bug(http://jira.codehaus.org/browse/MRELEASE-128) in the maven release plugin it's not possible to use properties in the scm information. This plugin will allow you to keep the same hostnames in the scm and distributionManagement tag, but pull a switch-a-roo with some hosts file magic.
+A need arose to test mvn releases without actually tagging and pushing artifacts to any "official" repository. Due to a "bug":http://jira.codehaus.org/browse/MRELEASE-128 in the maven release plugin it's not possible to use properties in the scm information. This plugin will allow you to keep the same hostnames in the scm and distributionManagement tags, but pull a switch-a-roo with some hosts file magic.
 
 h1. Usage:
 
