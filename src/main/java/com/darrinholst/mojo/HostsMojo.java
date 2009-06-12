@@ -1,4 +1,4 @@
-package com.geolearning.mojo;
+package com.darrinholst.mojo;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -79,8 +79,10 @@ public class HostsMojo extends AbstractMojo {
 	protected void backup(File file) throws MojoExecutionException {
 		try {
 			File backupFile = new File(file.getAbsolutePath() + BACKUP_SUFFIX);
-			backupFile.createNewFile();
-			FileUtils.copyFile(file, backupFile);
+
+			if (backupFile.createNewFile()) {
+				FileUtils.copyFile(file, backupFile);
+			}
 		}
 		catch (Exception e) {
 			throw new MojoExecutionException("unable to create backup file", e);

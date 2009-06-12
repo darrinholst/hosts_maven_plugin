@@ -1,4 +1,4 @@
-package com.geolearning.mojo;
+package com.darrinholst.mojo;
 
 import static org.junit.Assert.*;
 
@@ -25,6 +25,30 @@ public class HostsMojoTest {
 		mojo.execute();
 
 		assertEquals("original file\nip host\n", FileUtils.readFileToString(original));
+		assertEquals("original file", FileUtils.readFileToString(new File(original.getAbsoluteFile() + HostsMojo.BACKUP_SUFFIX)));
+		assertTrue(mojo.addShutdownHook_called);
+	}
+
+	@Test
+	public void testExecuteTwice() throws Exception {
+		File original = createFile("original file");
+
+		Map<String, String> hosts = new HashMap<String, String>();
+		hosts.put("host", "ip");
+
+		ShuntedHostsMojo mojo = new ShuntedHostsMojo();
+		mojo.hostsFile = original.getAbsolutePath();
+		mojo.hosts = hosts;
+
+		mojo.execute();
+
+		hosts = new HashMap<String, String>();
+		hosts.put("host2", "ip2");
+		mojo.hosts = hosts;
+
+		mojo.execute();
+
+		assertEquals("original file" + "\n" + "ip host" + "\n\n" + "ip2 host2" + "\n", FileUtils.readFileToString(original));
 		assertEquals("original file", FileUtils.readFileToString(new File(original.getAbsoluteFile() + HostsMojo.BACKUP_SUFFIX)));
 		assertTrue(mojo.addShutdownHook_called);
 	}
