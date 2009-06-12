@@ -1,0 +1,72 @@
+h1. Description: 
+
+The need to test out our mvn releases without actually tagging and pushing artifacts to the repository. Due to a bug(http://jira.codehaus.org/browse/MRELEASE-128) in the maven release plugin it's not possible to use properties in the scm information. This plugin will allow you to keep the same hostnames in the scm and distributionManagement tag, but pull a switch-a-roo with some hosts file magic.
+
+h1. Usage:
+
+Given the following in your pom...
+
+<pre>
+<scm>
+    <connection>scm:svn:http://svnhost/trunk</connection>
+</scm>
+
+<distributionManagement>
+    <repository>
+        <id>releases</id>
+        <url>http://mvnhost:8081/nexus/content/repositories/releases</url>
+    </repository>
+</distributionManagement>
+</pre>
+
+add the plugin repository...
+
+<pre>
+<pluginRepositories>
+    <pluginRepository>
+        <id>darrinholst</id>
+        <url>http://darrinholst-maven.googlecode.com/svn/repo/</url>
+    </pluginRepository>
+</pluginRepositories>
+</pre>
+
+and then add the plugin (most likely to a profile) which is bound to some phase that will get executed before the release, i.e. clean
+
+<pre>
+<profiles>
+    <profile>
+        <id>local-deploy</id>
+        <build>
+            <plugins>
+                <plugin>
+                    <groupId>com.darrinholst</groupId>
+                    <artifactId>hosts-maven-plugin</artifactId>
+                    <version>1.0.0</version>
+                    <executions>
+                        <execution>
+                            <phase>clean</phase>
+                            <goals>
+                                <goal>switch</goal>
+                            </goals>
+                            <configuration>
+                                <hosts>
+                                    <svnhost>127.0.0.1</svnhost>
+                                    <mvnhost>127.0.0.1</mvnhost>
+                                </hosts>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </build>
+    </profile>
+</profiles>
+</pre>
+
+then when you execute...
+
+<pre>
+mvn clean release:prepare release:perform -P local-deploy
+</pre>
+
+...any traffic going to svnhost or mvnhost will head on over to 127.0.0.1
